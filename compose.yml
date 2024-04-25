@@ -10,7 +10,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=nestjs-boilerplate
+      - POSTGRES_DB=secure-note
     volumes:
       - ./pgdata:/var/lib/postgresql/data
 
@@ -27,7 +27,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     restart: always
-    container_name: nestjs-boilerplate-pgadmin4
+    container_name: secure-note-pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=pgadmin4
@@ -37,5 +37,5 @@ services:
       - db
 
 volumes:
-  nestjs-boilerplate-data:
-    name: nestjs-boilerplate-data
+  secure-note-data:
+    name: secure-note-data
