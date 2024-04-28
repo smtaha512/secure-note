@@ -6,7 +6,6 @@ import { KeysFromSnakeToCamelCase } from '../../shared/types/utility-types';
 type AllowedFileExtensions = 'ts' | 'js';
 
 export interface EnvironmentVariablesForSrcConfig {
-  SRC_ROOT: string;
   SRC_FILE_EXTENSION: AllowedFileExtensions;
 }
 
@@ -20,17 +19,15 @@ export const SrcConfigValidationSchema = Joi.object<
   true
 >({
   SRC_FILE_EXTENSION: Joi.string().required(),
-  SRC_ROOT: Joi.string().required(),
 });
 
 export const srcConfig = registerAs<SrcConfig>(SRC_CONFIG, () => {
   const {
-    env: { SRC_FILE_EXTENSION, SRC_ROOT },
+    env: { SRC_FILE_EXTENSION },
   } = process;
 
   const config: SrcConfig = {
     srcFileExtension: SRC_FILE_EXTENSION as AllowedFileExtensions,
-    srcRoot: SRC_ROOT!,
   };
 
   return config;

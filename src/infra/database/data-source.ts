@@ -12,20 +12,18 @@ export function dataSourceFactory(
   databaseConfig: DatabaseConfig,
   srcConfig: SrcConfig,
 ): DataSourceOptions & { cli: { migrationsDir: string } } {
-  const { srcFileExtension, srcRoot } = srcConfig;
+  const { srcFileExtension } = srcConfig;
 
   return {
-    entities: [`${srcRoot}/**/*.typeorm.entity.${srcFileExtension}`],
-    migrations: [
-      `${srcRoot}/database/migrations/**.migration.${srcFileExtension}`,
-    ],
+    entities: [`${__dirname}/**/*.typeorm.entity.${srcFileExtension}`],
+    migrations: [`${__dirname}/migrations/**.migration.${srcFileExtension}`],
     schema: databaseConfig.databaseSchema,
     type: databaseConfig.type,
     url: databaseConfig.databaseUri,
     dropSchema: false,
     synchronize: false,
     cli: {
-      migrationsDir: `${srcRoot}/infra/database/migrations`,
+      migrationsDir: `${__dirname}/migrations`,
     },
   };
 }
@@ -42,12 +40,15 @@ async function buildDataSourceForMigrations(): Promise<DataSource> {
 
   await dataSource.initialize();
 
-  await dataSource
-    .createQueryRunner()
-    .createSchema(databaseConfig.databaseSchema, /* ifNotExist = */ true);
+  const queryRunner = dataSource.createQueryRunner();
+  await queryRunner.createSchema(
+    databaseConfig.databaseSchema,
+    /* ifNotExist = */ true,
+  );
+  await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`);
 
   // Since TypeORM will initialize the dataSource internally we need to destroy it here otherwise it will throw error
-  dataSource.destroy();
+  await dataSource.destroy();
 
   // Returning the dataSource from above will throw error
   return new DataSource(dataSourceOptions);

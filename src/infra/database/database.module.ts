@@ -1,11 +1,28 @@
-import { Module } from '@nestjs/common';
-import { DatabaseConfigFeatureModule } from '../config/database.config';
-import { SrcConfigFeatureModule } from '../config/src.config';
-import { databaseProvider } from './database.provider';
+import { Global, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import {
+  DatabaseConfig,
+  DatabaseConfigInjectionKey,
+} from '../config/database.config';
+import { SrcConfig, SrcConfigInjectionKey } from '../config/src.config';
+import { dataSourceFactory } from './data-source';
 
+@Global()
 @Module({
-  imports: [DatabaseConfigFeatureModule, SrcConfigFeatureModule],
-  providers: [databaseProvider],
-  exports: [databaseProvider],
+  imports: [
+    TypeOrmModule.forRootAsync({
+      inject: [DatabaseConfigInjectionKey, SrcConfigInjectionKey],
+      useFactory: async (
+        databaseConfig: DatabaseConfig,
+        srcConfig: SrcConfig,
+      ) => {
+        return {
+          ...dataSourceFactory(databaseConfig, srcConfig),
+          migrationsRun: true,
+          autoLoadEntities: true,
+        };
+      },
+    }),
+  ],
 })
 export class DatabaseModule {}
