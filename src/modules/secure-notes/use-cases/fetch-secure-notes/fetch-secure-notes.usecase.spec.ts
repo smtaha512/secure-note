@@ -19,7 +19,7 @@ describe('FetchSecureNotesUsecase', () => {
     expect(fetchSecureNotesUsecase).toBeDefined();
   });
 
-  describe('findAll()', () => {
+  describe('execute()', () => {
     it('should only return `id` and `createdAt` for all the items', async () => {
       const list: SecureNotesList = [{ createdAt: new Date(), id: uuidV4() }];
 
