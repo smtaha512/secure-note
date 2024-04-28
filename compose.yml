@@ -19,8 +19,6 @@ services:
       - '5433:5432'
     env_file:
       - .env.local
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
