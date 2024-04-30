@@ -12,6 +12,11 @@ export class SecureNotesTypeormRepository implements SecureNotesRepository {
     private readonly repository: Repository<SecureNoteTypeormEntity>,
   ) {}
 
+  async create(note: Pick<SecureNote, 'note'>): Promise<1> {
+    await this.repository.save(note);
+    return 1;
+  }
+
   async findAll(): Promise<Pick<SecureNote, 'id' | 'createdAt'>[]> {
     return this.repository.find({ select: ['createdAt', 'id'] });
   }

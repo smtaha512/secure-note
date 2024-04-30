@@ -19,6 +19,18 @@ describe('SecureNoteTypeormRepository', () => {
     expect(secureNotesTypeormRepository).toBeDefined();
   });
 
+  describe('create()', () => {
+    it('should pass correct params to the repository', async () => {
+      const note = 'note-to-save';
+
+      secureNotesTypeormRepository.create({ note });
+
+      expect(nativeRepository.save).toHaveBeenCalledTimes(1);
+
+      expect(nativeRepository.save).toHaveBeenCalledWith({ note });
+    });
+  });
+
   describe('findAll()', () => {
     it('should only return `id` and `createdAt` for all the items', async () => {
       const entity = new SecureNoteTypeormEntity();
