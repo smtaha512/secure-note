@@ -7,6 +7,7 @@ import { CryptoService } from './infra/crypto/crypto.service';
 import { SecureNoteTypeormEntity } from './infra/secure-note.typeorm.entity';
 import { SecureNotesTypeormRepository } from './infra/secure-notes.typeorm.repository';
 import { CreateSecureNotesUsecase } from './use-cases/create-secure-notes/create-secure-notes.usecase';
+import { DeleteSecureNoteUsecase } from './use-cases/delete-secure-note/delete-secure-note.usecase';
 import { FetchSecureNoteUsecase } from './use-cases/fetch-secure-note/fetch-secure-note.usecase';
 import { FetchSecureNotesUsecase } from './use-cases/fetch-secure-notes/fetch-secure-notes.usecase';
 
@@ -21,6 +22,7 @@ import { FetchSecureNotesUsecase } from './use-cases/fetch-secure-notes/fetch-se
     { provide: CryptoProvider, useClass: CryptoService },
 
     CreateSecureNotesUsecase,
+    DeleteSecureNoteUsecase,
     FetchSecureNoteUsecase,
     FetchSecureNotesUsecase,
   ],

@@ -17,6 +17,10 @@ export class SecureNotesTypeormRepository implements SecureNotesRepository {
     await this.repository.save(note);
   }
 
+  async delete(id: string): Promise<void> {
+    await this.repository.delete(id);
+  }
+
   async findAll(): Promise<Pick<SecureNote, 'id' | 'createdAt'>[]> {
     return this.repository.find({ select: ['createdAt', 'id'] });
   }

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuidV4 } from 'uuid';
 import { SecureNoteTypeormEntity } from '../infra/secure-note.typeorm.entity';
 import { CreateSecureNotesUsecase } from '../use-cases/create-secure-notes/create-secure-notes.usecase';
+import { DeleteSecureNoteUsecase } from '../use-cases/delete-secure-note/delete-secure-note.usecase';
 import { FetchSecureNoteUsecase } from '../use-cases/fetch-secure-note/fetch-secure-note.usecase';
 import { FetchSecureNotesUsecase } from '../use-cases/fetch-secure-notes/fetch-secure-notes.usecase';
 import { CreateSecureNoteBodyDto } from './dtos/create-secure-note.body.dto';
@@ -11,6 +12,7 @@ import { SecureNotesController } from './secure-notes.controller';
 describe('SecureNotesController', () => {
   let controller: SecureNotesController;
   let createSecureNotesUsecase: jest.Mocked<CreateSecureNotesUsecase>;
+  let deleteSecureNoteUsecase: jest.Mocked<DeleteSecureNoteUsecase>;
   let fetchSecureNotesUsecase: jest.Mocked<FetchSecureNotesUsecase>;
   let fetchSecureNoteUsecase: jest.Mocked<FetchSecureNoteUsecase>;
 
@@ -19,6 +21,7 @@ describe('SecureNotesController', () => {
       controllers: [SecureNotesController],
       providers: [
         { provide: CreateSecureNotesUsecase, useValue: { execute: jest.fn() } },
+        { provide: DeleteSecureNoteUsecase, useValue: { execute: jest.fn() } },
         { provide: FetchSecureNotesUsecase, useValue: { execute: jest.fn() } },
         { provide: FetchSecureNoteUsecase, useValue: { execute: jest.fn() } },
       ],
@@ -26,6 +29,7 @@ describe('SecureNotesController', () => {
 
     controller = module.get<SecureNotesController>(SecureNotesController);
     createSecureNotesUsecase = module.get(CreateSecureNotesUsecase);
+    deleteSecureNoteUsecase = module.get(DeleteSecureNoteUsecase);
     fetchSecureNotesUsecase = module.get(FetchSecureNotesUsecase);
     fetchSecureNoteUsecase = module.get(FetchSecureNoteUsecase);
   });
@@ -60,6 +64,25 @@ describe('SecureNotesController', () => {
     });
   });
 
+  describe('deleteSecureNote()', () => {
+    const id = uuidV4();
+    beforeEach(() => {
+      deleteSecureNoteUsecase.execute.mockResolvedValue(undefined);
+    });
+
+    it('should pass correct params to the usecase', async () => {
+      await controller.deleteSecureNote({ id });
+
+      expect(deleteSecureNoteUsecase.execute).toHaveBeenCalledTimes(1);
+
+      expect(deleteSecureNoteUsecase.execute).toHaveBeenCalledWith(id);
+    });
+
+    it('should return `undefined` if secure note is deleted successfully', async () => {
+      expect(controller.deleteSecureNote({ id })).resolves.toBeUndefined();
+    });
+  });
+
   describe('fetchSecureNotes()', () => {
     it('should return list of secure notes', () => {
       const list: FetchSecureNotesResponseDto[] = [
@@ -71,7 +94,7 @@ describe('SecureNotesController', () => {
       expect(controller.fetchSecureNotes()).resolves.toStrictEqual(list);
     });
 
-    it('should empty array if secure notes are not available', () => {
+    it('should return empty array if secure notes are not available', () => {
       fetchSecureNotesUsecase.execute.mockResolvedValue([]);
 
       expect(controller.fetchSecureNotes()).resolves.toStrictEqual([]);

@@ -33,6 +33,24 @@ describe('SecureNoteTypeormRepository', () => {
     });
   });
 
+  describe('delete()', () => {
+    const id = uuidV4();
+
+    it('should pass correct params to native repository', async () => {
+      await secureNotesTypeormRepository.delete(id);
+
+      expect(nativeRepository.delete).toHaveBeenCalledTimes(1);
+
+      expect(nativeRepository.delete).toHaveBeenCalledWith(id);
+    });
+
+    it('should return undefined on delete', async () => {
+      nativeRepository.delete.mockResolvedValue({ raw: [], affected: 1 });
+
+      expect(secureNotesTypeormRepository.delete(id)).resolves.toBeUndefined();
+    });
+  });
+
   describe('findAll()', () => {
     it('should only return `id` and `createdAt` for all the items', async () => {
       const entity = new SecureNoteTypeormEntity();
@@ -51,7 +69,7 @@ describe('SecureNoteTypeormRepository', () => {
       );
     });
 
-    it('should empty array if secure notes are not available', () => {
+    it('should return empty array if secure notes are not available', () => {
       nativeRepository.find.mockResolvedValue([]);
 
       expect(secureNotesTypeormRepository.findAll()).resolves.toStrictEqual([]);
