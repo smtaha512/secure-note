@@ -1,6 +1,8 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest';
-import { Repository } from 'typeorm';
+import { EntityNotFoundError, Repository } from 'typeorm';
+import { v4 as uuidV4 } from 'uuid';
 import { SecureNotesList } from '../domain/secure-note';
+import { SecureNoteNotFoundError } from './errors/secure-note-not-found.error';
 import { SecureNoteTypeormEntity } from './secure-note.typeorm.entity';
 import { SecureNotesTypeormRepository } from './secure-notes.typeorm.repository';
 
@@ -53,6 +55,38 @@ describe('SecureNoteTypeormRepository', () => {
       nativeRepository.find.mockResolvedValue([]);
 
       expect(secureNotesTypeormRepository.findAll()).resolves.toStrictEqual([]);
+    });
+  });
+
+  describe('findById()', () => {
+    const id = uuidV4();
+    describe('success scenarios', () => {
+      it('should return secure note entity by id', async () => {
+        const secureNote = new SecureNoteTypeormEntity();
+        secureNote.createdAt = new Date();
+        secureNote.updatedAt = new Date();
+        secureNote.id = id;
+        secureNote.note =
+          '28bf1ae0eb72f5c18cd043a6189d3d97:c021ab70fcc1c38f06df348288fabdc5';
+
+        nativeRepository.findOneByOrFail.mockResolvedValue(secureNote);
+
+        expect(secureNotesTypeormRepository.findById(id)).resolves.toEqual(
+          secureNote,
+        );
+      });
+    });
+
+    describe('error scenarios', () => {
+      it(`it should throw ${SecureNoteNotFoundError.name} if secure note is not found`, async () => {
+        nativeRepository.findOneByOrFail.mockRejectedValue(
+          new EntityNotFoundError(SecureNoteTypeormEntity, { id }),
+        );
+
+        await expect(secureNotesTypeormRepository.findById(id)).rejects.toEqual(
+          new SecureNoteNotFoundError({ id }),
+        );
+      });
     });
   });
 });

@@ -7,3 +7,5 @@ export interface SecureNote {
 export type SecureNoteListItem = Pick<SecureNote, 'id' | 'createdAt'>;
 
 export type SecureNotesList = Array<SecureNoteListItem>;
+
+export type SecureNoteCrypticState = 'encrypted' | 'decrypted';
