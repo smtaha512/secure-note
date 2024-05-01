@@ -8,7 +8,7 @@ import { SecureNotesController } from './secure-notes.controller';
 
 describe('SecureNotesController', () => {
   let controller: SecureNotesController;
-  let fetchSecureNotesUser: jest.Mocked<FetchSecureNotesUsecase>;
+  let fetchSecureNotesUsecase: jest.Mocked<FetchSecureNotesUsecase>;
   let createSecureNotesUsecase: jest.Mocked<CreateSecureNotesUsecase>;
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('SecureNotesController', () => {
 
     controller = module.get<SecureNotesController>(SecureNotesController);
     createSecureNotesUsecase = module.get(CreateSecureNotesUsecase);
-    fetchSecureNotesUser = module.get(FetchSecureNotesUsecase);
+    fetchSecureNotesUsecase = module.get(FetchSecureNotesUsecase);
   });
 
   it('should be defined', () => {
@@ -61,13 +61,13 @@ describe('SecureNotesController', () => {
         { createdAt: new Date(), id: uuidV4() },
       ];
 
-      fetchSecureNotesUser.execute.mockResolvedValue(list);
+      fetchSecureNotesUsecase.execute.mockResolvedValue(list);
 
       expect(controller.fetchSecureNotes()).resolves.toStrictEqual(list);
     });
 
     it('should empty array if secure notes are not available', () => {
-      fetchSecureNotesUser.execute.mockResolvedValue([]);
+      fetchSecureNotesUsecase.execute.mockResolvedValue([]);
 
       expect(controller.fetchSecureNotes()).resolves.toStrictEqual([]);
     });
