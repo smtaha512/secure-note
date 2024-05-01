@@ -107,4 +107,29 @@ describe('SecureNoteTypeormRepository', () => {
       });
     });
   });
+
+  describe('update()', () => {
+    const id = uuidV4();
+    const note = 'note';
+
+    it('should pass correct params to native repository', async () => {
+      await secureNotesTypeormRepository.update(id, note);
+
+      expect(nativeRepository.update).toHaveBeenCalledTimes(1);
+
+      expect(nativeRepository.update).toHaveBeenCalledWith(id, { note });
+    });
+
+    it('should return undefined on update', async () => {
+      nativeRepository.update.mockResolvedValue({
+        raw: [],
+        affected: 1,
+        generatedMaps: [],
+      });
+
+      expect(
+        secureNotesTypeormRepository.update(id, note),
+      ).resolves.toBeUndefined();
+    });
+  });
 });

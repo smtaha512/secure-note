@@ -3,8 +3,10 @@ import { v4 as uuidV4 } from 'uuid';
 import { SecureNoteTypeormEntity } from '../infra/secure-note.typeorm.entity';
 import { CreateSecureNotesUsecase } from '../use-cases/create-secure-notes/create-secure-notes.usecase';
 import { DeleteSecureNoteUsecase } from '../use-cases/delete-secure-note/delete-secure-note.usecase';
+import { CannotFindSecureNoteByCriteriaException } from '../use-cases/exceptions/cannot-find-secure-note-by-criteria.exception';
 import { FetchSecureNoteUsecase } from '../use-cases/fetch-secure-note/fetch-secure-note.usecase';
 import { FetchSecureNotesUsecase } from '../use-cases/fetch-secure-notes/fetch-secure-notes.usecase';
+import { UpdateSecureNoteUsecase } from '../use-cases/update-secure-note/update-secure-note.usecase';
 import { CreateSecureNoteBodyDto } from './dtos/create-secure-note.body.dto';
 import { FetchSecureNotesResponseDto } from './dtos/fetch-secure-notes.response.dto';
 import { SecureNotesController } from './secure-notes.controller';
@@ -15,6 +17,7 @@ describe('SecureNotesController', () => {
   let deleteSecureNoteUsecase: jest.Mocked<DeleteSecureNoteUsecase>;
   let fetchSecureNotesUsecase: jest.Mocked<FetchSecureNotesUsecase>;
   let fetchSecureNoteUsecase: jest.Mocked<FetchSecureNoteUsecase>;
+  let updateSecureNoteUsecase: jest.Mocked<UpdateSecureNoteUsecase>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,6 +27,7 @@ describe('SecureNotesController', () => {
         { provide: DeleteSecureNoteUsecase, useValue: { execute: jest.fn() } },
         { provide: FetchSecureNotesUsecase, useValue: { execute: jest.fn() } },
         { provide: FetchSecureNoteUsecase, useValue: { execute: jest.fn() } },
+        { provide: UpdateSecureNoteUsecase, useValue: { execute: jest.fn() } },
       ],
     }).compile();
 
@@ -32,6 +36,7 @@ describe('SecureNotesController', () => {
     deleteSecureNoteUsecase = module.get(DeleteSecureNoteUsecase);
     fetchSecureNotesUsecase = module.get(FetchSecureNotesUsecase);
     fetchSecureNoteUsecase = module.get(FetchSecureNoteUsecase);
+    updateSecureNoteUsecase = module.get(UpdateSecureNoteUsecase);
   });
 
   it('should be defined', () => {
@@ -131,6 +136,44 @@ describe('SecureNotesController', () => {
         expect(
           controller.fetchSecureNote({ id }, { mode: 'encrypted' }),
         ).resolves.toEqual(secureNote);
+      });
+    });
+  });
+
+  describe('updateSecureNote()', () => {
+    const id = uuidV4();
+    const note = 'update';
+
+    describe('success scenarios', () => {
+      it('should pass correct params to the use case ', async () => {
+        await controller.updateSecureNote({ id }, { note });
+
+        expect(updateSecureNoteUsecase.execute).toHaveBeenCalledTimes(1);
+
+        expect(updateSecureNoteUsecase.execute).toHaveBeenCalledWith({
+          id,
+          note,
+        });
+      });
+
+      it('should return undefined after updating the note', async () => {
+        updateSecureNoteUsecase.execute.mockResolvedValue(undefined);
+
+        expect(
+          controller.updateSecureNote({ id }, { note }),
+        ).resolves.toBeUndefined();
+      });
+    });
+
+    describe('exception scenarios', () => {
+      it('should throw exception if note is not found', async () => {
+        const exception = new CannotFindSecureNoteByCriteriaException({ id });
+
+        updateSecureNoteUsecase.execute.mockRejectedValue(exception);
+
+        expect(controller.updateSecureNote({ id }, { note })).rejects.toThrow(
+          exception,
+        );
       });
     });
   });

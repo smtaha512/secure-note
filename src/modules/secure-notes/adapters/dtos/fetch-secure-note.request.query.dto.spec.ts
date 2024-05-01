@@ -7,7 +7,7 @@ const isIn = 'mode must be one of the following values: encrypted, decrypted';
 
 describe('FetchSecureNoteRequestQueryDto', () => {
   describe('success scenarios', () => {
-    fit.each([['encrypted'], ['decrypted']])(
+    it.each([['encrypted'], ['decrypted']])(
       'should not have error if mode = `%s`',
       async (mode) => {
         const params = new FetchSecureNoteRequestQueryDto();
@@ -21,7 +21,7 @@ describe('FetchSecureNoteRequestQueryDto', () => {
   });
 
   describe('error scenarios', () => {
-    fit.each([
+    it.each([
       { mode: null, expectedError: { isString, isIn } },
       { mode: undefined, expectedError: { isString, isIn } },
       { mode: '', expectedError: { isIn } },

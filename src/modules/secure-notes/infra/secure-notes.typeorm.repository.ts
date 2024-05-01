@@ -36,4 +36,8 @@ export class SecureNotesTypeormRepository implements SecureNotesRepository {
       throw error;
     }
   }
+
+  async update(id: string, note: string): Promise<void> {
+    await this.repository.update(id, { note });
+  }
 }

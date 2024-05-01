@@ -10,6 +10,7 @@ import { CreateSecureNotesUsecase } from './use-cases/create-secure-notes/create
 import { DeleteSecureNoteUsecase } from './use-cases/delete-secure-note/delete-secure-note.usecase';
 import { FetchSecureNoteUsecase } from './use-cases/fetch-secure-note/fetch-secure-note.usecase';
 import { FetchSecureNotesUsecase } from './use-cases/fetch-secure-notes/fetch-secure-notes.usecase';
+import { UpdateSecureNoteUsecase } from './use-cases/update-secure-note/update-secure-note.usecase';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SecureNoteTypeormEntity])],
@@ -25,6 +26,7 @@ import { FetchSecureNotesUsecase } from './use-cases/fetch-secure-notes/fetch-se
     DeleteSecureNoteUsecase,
     FetchSecureNoteUsecase,
     FetchSecureNotesUsecase,
+    UpdateSecureNoteUsecase,
   ],
   controllers: [SecureNotesController],
 })

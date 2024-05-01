@@ -7,4 +7,5 @@ export interface SecureNotesRepository {
   delete(id: string): Promise<void>;
   findAll(): Promise<SecureNotesList>;
   findById(id: string): Promise<SecureNote>;
+  update(id: string, note: string): Promise<void>;
 }
