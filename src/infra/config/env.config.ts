@@ -20,7 +20,7 @@ export type EnvFilePath = `.env.${Environments}`;
 
 export enum Environments {
   LOCAL = 'local',
-  TESTING = 'testing',
+  TESTING = 'test',
   DEVELOPMENT = 'development',
   PRODUCTION = 'production',
   STAGING = 'staging',
