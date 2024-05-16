@@ -20,6 +20,27 @@ services:
     env_file:
       - .env.local
 
+  db-production:
+    container_name: postgres-production
+    image: postgres:16-alpine
+    ports: 
+      - '5432:5432'
+    env_file:
+      - .env.production
+
+  app-production:
+    container_name: secure-note
+    build:
+      dockerfile: Dockerfile
+      context: .
+    env_file: 
+      - .env.production
+    depends_on:
+      - db-production
+    command: npm run start:prod
+    ports:
+      - 3000:3000
+
   pgadmin:
     image: dpage/pgadmin4
     restart: always

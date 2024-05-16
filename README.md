@@ -70,3 +70,12 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## Running the production app
+
+```bash
+$ docker-compose up -d app-production
+
+# stop containers and removes containers, networks, volumes, and images created by up
+$ npm run infra:down
+```
