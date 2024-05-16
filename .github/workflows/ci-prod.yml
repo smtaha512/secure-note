@@ -25,11 +25,9 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
-
           cd ./secure-note &&
           git checkout master &&
           git fetch --all &&
           git reset --hard origin/main &&
           git pull origin master &&
-          docker-compose up -d --build app-production
-        '
+          docker-compose up -d --build app-production'
